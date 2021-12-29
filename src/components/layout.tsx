@@ -12,16 +12,21 @@ import { useStaticQuery, graphql } from "gatsby"
 import Header from "./header"
 import "./layout.css"
 
-const Layout = ({ children }) => {
+const Layout: React.FC = ({ children }) => {
   const data = useStaticQuery(graphql`
-    query SiteTitleQuery {
-      site {
-        siteMetadata {
-          title
+      query SiteTitleQuery {
+        site {
+          siteMetadata {
+            title
+          }
+          buildTime
         }
       }
-    }
-  `)
+    `),
+    publishDate = React.useMemo(
+      () => new Date(data.site.buildTime).toLocaleDateString(),
+      [data.site.buildTime]
+    )
 
   return (
     <>
@@ -37,11 +42,16 @@ const Layout = ({ children }) => {
         <footer
           style={{
             marginTop: `2rem`,
+            display: "flex",
+            justifyContent: "space-between",
           }}
         >
-          © {new Date().getFullYear()}, Built with
-          {` `}
-          <a href="https://www.gatsbyjs.com">Gatsby</a>
+          <section>
+            © {new Date().getFullYear()}, Built with
+            {` `}
+            <a href="https://www.gatsbyjs.com">Gatsby</a>
+          </section>
+          <section>Last published: {publishDate}</section>
         </footer>
       </div>
     </>
